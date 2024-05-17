@@ -46,6 +46,7 @@ class LoginActivity : AppCompatActivity() {
             binding.submitBtn.visibility= View.VISIBLE
         }
     }
+
     fun login(){
         val email =binding.emailInput.text.toString()
         val password=binding.passwordInput.text.toString()
