@@ -38,7 +38,7 @@ class VideoUploadActivity : AppCompatActivity() {
         videoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result->
             if(result.resultCode == RESULT_OK){
                 selectedVideoUri = result.data?.data
-                showPostView()
+                showPostView();
             }
         }
 
@@ -47,7 +47,7 @@ class VideoUploadActivity : AppCompatActivity() {
         }
 
         binding.submitPostBtn.setOnClickListener{
-            postVideo()
+            postVideo();
         }
         binding.cancelPostBtn.setOnClickListener{
             finish()
