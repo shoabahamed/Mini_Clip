@@ -9,6 +9,7 @@ import com.example.mini_clip.model.VideoModel
 import com.example.mini_clip.util.UiUtil
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 
 class MainActivity : AppCompatActivity() {
@@ -29,7 +30,10 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this,VideoUploadActivity::class.java))
                 }
                 R.id.bottom_menu_profile->{
-                    UiUtil.showToast(this, "Profile")
+                    //Goto ProfileActivity
+                    val intent = Intent(this,ProfileActivity::class.java)
+                    intent.putExtra("profile_user_id", FirebaseAuth.getInstance().currentUser?.uid )
+                    startActivity(intent)
                 }
             }
             false
