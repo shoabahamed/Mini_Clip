@@ -1,9 +1,11 @@
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.mini_clip.ProfileActivity
 import com.example.mini_clip.R
 import com.example.mini_clip.databinding.VideoItemRowBinding
 import com.example.mini_clip.model.UserModel
@@ -37,6 +39,12 @@ class VideoListAdapter(
                                 RequestOptions().placeholder(R.drawable.icon_profile)
                             )
                             .into(binding.profileIcon)
+
+                        binding.userDetailLayout.setOnClickListener {
+                            val intent = Intent(binding.userDetailLayout.context, ProfileActivity::class.java)
+                            intent.putExtra("profile_user_id", id )
+                            binding.userDetailLayout.context.startActivity(intent)
+                        }
                     }
                 }
             binding.captionView.text = videoModel.title
