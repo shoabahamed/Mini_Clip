@@ -11,6 +11,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.ktx.firestore
 
 class MainActivity : AppCompatActivity() {
 
@@ -61,4 +62,22 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         adapter.startListening()
     }
+
+    override fun onPause() {
+        super.onPause()
+        updateVideoDetails()
+    }
+
+    private fun updateVideoDetails() {
+        for (position in 0 until adapter.itemCount) {
+            val videoModel = adapter.getItem(position)
+            updateVideoData(videoModel)
+        }
+    }
+    fun updateVideoData(model: VideoModel) {
+        com.google.firebase.ktx.Firebase.firestore.collection("videos")
+            .document(model.videoId)
+            .set(model)
+    }
+
 }

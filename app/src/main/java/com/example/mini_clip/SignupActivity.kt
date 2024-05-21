@@ -75,13 +75,12 @@ class SignupActivity : AppCompatActivity() {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(
             email,password
         ).addOnSuccessListener {
-
             it.user?.let {user->
                 val userModel = UserModel(user.uid,email,email.substringBefore("@"))
                 Firebase.firestore.collection("users")
                     .document(user.uid)
                     .set(userModel).addOnSuccessListener {
-              UiUtil.showToast(applicationContext,"Account created successfully")
+                        UiUtil.showToast(applicationContext,"Account created successfully")
                         setInProgress(false)
                         startActivity(Intent(this,MainActivity::class.java))
                         finish()

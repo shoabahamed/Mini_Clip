@@ -69,7 +69,7 @@ class ProfileActivity : AppCompatActivity() {
             }
             }
             getProfileDataFromFirebase()
-        setupRecyclerView()
+            setupRecyclerView()
         }
 
 

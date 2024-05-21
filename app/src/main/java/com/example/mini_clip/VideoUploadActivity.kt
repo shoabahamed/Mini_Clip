@@ -96,6 +96,7 @@ class VideoUploadActivity : AppCompatActivity() {
             binding.postCaptionInput.text.toString(),
             url,
             FirebaseAuth.getInstance().currentUser?.uid!!,
+
             Timestamp.now(),
         )
         Firebase.firestore.collection("videos")
