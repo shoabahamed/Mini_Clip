@@ -22,21 +22,33 @@ class VideoListAdapter(
     options: FirestoreRecyclerOptions<VideoModel>
 ) : FirestoreRecyclerAdapter<VideoModel, VideoListAdapter.VideoViewHolder>(options) {
 
-    lateinit var currentUserId: String
+    private lateinit var currentUserId: String
+    private var currentUserModel: UserModel? = null
     private val videoUpdateMap = mutableMapOf<String, VideoModel>()
+    private val userUpdateMap = mutableMapOf<String, UserModel>()
+
+    init {
+        // Fetch current user data once during adapter initialization
+        currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        Firebase.firestore.collection("users")
+            .document(currentUserId)
+            .get().addOnSuccessListener { documentSnapshot ->
+                currentUserModel = documentSnapshot?.toObject(UserModel::class.java)
+                notifyDataSetChanged() // Notify the adapter that data has changed so it can re-bind views
+            }
+    }
 
     inner class VideoViewHolder(private val binding: VideoItemRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindVideo(videoModel: VideoModel) {
-
             Firebase.firestore.collection("users")
                 .document(videoModel.uploaderId)
-                .get().addOnSuccessListener {
-                    val userModel = it?.toObject(UserModel::class.java)
+                .get().addOnSuccessListener { documentSnapshot ->
+                    val userModel = documentSnapshot?.toObject(UserModel::class.java)
                     userModel?.apply {
                         binding.usernameView.text = username
 
-                        //bind profilepic
+                        // Bind profile pic
                         Glide.with(binding.profileIcon).load(profilePic)
                             .circleCrop()
                             .apply(
@@ -51,6 +63,24 @@ class VideoListAdapter(
                         }
                     }
                 }
+
+            binding.bookmarkIcon.setOnClickListener {
+                if (currentUserModel?.bookMarkList?.contains(videoModel.videoId) == true) {
+                    currentUserModel?.bookMarkList?.remove(videoModel.videoId)
+                    binding.bookmarkIcon.clearColorFilter()
+                } else {
+                    binding.bookmarkIcon.setColorFilter(
+                        ContextCompat.getColor(binding.bookmarkIcon.context, R.color.my_primary),
+                        PorterDuff.Mode.SRC_IN
+                    )
+                    currentUserModel?.bookMarkList?.add(videoModel.videoId)
+                }
+                currentUserModel?.let {
+                    userUpdateMap[currentUserId] = it
+                }
+            }
+
+            checkVideoDetailsStatus(binding, videoModel)
 
             binding.likeDetails.setOnClickListener {
                 if (videoModel.likeList.contains(currentUserId)) {
@@ -100,10 +130,10 @@ class VideoListAdapter(
                 setUI(binding, videoModel)
             }
 
-
             setUI(binding, videoModel)
+
             binding.progressBar.visibility = View.VISIBLE
-            //bindVideo
+            // Bind video
             binding.videoView.apply {
                 setVideoPath(videoModel.url)
                 setOnPreparedListener {
@@ -111,7 +141,7 @@ class VideoListAdapter(
                     it.start()
                     it.isLooping = true
                 }
-                //play pause
+                // Play pause
                 setOnClickListener {
                     if (isPlaying) {
                         pause()
@@ -127,7 +157,6 @@ class VideoListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
         val binding = VideoItemRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        currentUserId = FirebaseAuth.getInstance().currentUser?.uid!!
         return VideoViewHolder(binding)
     }
 
@@ -144,6 +173,10 @@ class VideoListAdapter(
                 updateVideoData(updatedModel)
                 videoUpdateMap.remove(model.videoId)
             }
+            userUpdateMap[currentUserId]?.let { updatedUser ->
+                updateUserData(updatedUser)
+                userUpdateMap.remove(currentUserId)
+            }
         }
     }
 
@@ -153,10 +186,46 @@ class VideoListAdapter(
             .set(model)
     }
 
+    fun updateUserData(model: UserModel) {
+        Firebase.firestore.collection("users")
+            .document(model.id)
+            .set(model)
+    }
+
     fun setUI(binding: VideoItemRowBinding, model: VideoModel) {
         binding.captionView.text = model.title
         binding.likeCount.text = formatLikeCount(model.likeList.size)
         binding.dislikeCount.text = formatLikeCount(model.dislikeList.size)
+
+        // Check if the current user has liked the video
+        if (model.likeList.contains(currentUserId)) {
+            binding.likeIcon.setColorFilter(
+                ContextCompat.getColor(binding.likeIcon.context, R.color.my_primary),
+                PorterDuff.Mode.SRC_IN
+            )
+        } else {
+            binding.likeIcon.clearColorFilter()
+        }
+
+        // Check if the current user has disliked the video
+        if (model.dislikeList.contains(currentUserId)) {
+            binding.dislikeIcon.setColorFilter(
+                ContextCompat.getColor(binding.dislikeIcon.context, R.color.my_primary),
+                PorterDuff.Mode.SRC_IN
+            )
+        } else {
+            binding.dislikeIcon.clearColorFilter()
+        }
+
+        // Check if the current user has bookmarked the video
+        if (currentUserModel?.bookMarkList?.contains(model.videoId) == true) {
+            binding.bookmarkIcon.setColorFilter(
+                ContextCompat.getColor(binding.bookmarkIcon.context, R.color.my_primary),
+                PorterDuff.Mode.SRC_IN
+            )
+        } else {
+            binding.bookmarkIcon.clearColorFilter()
+        }
     }
 
     fun formatLikeCount(count: Int): String {
@@ -168,4 +237,47 @@ class VideoListAdapter(
         }
     }
 
+    fun updateAllChanges() {
+        videoUpdateMap.forEach { (_, videoModel) ->
+            updateVideoData(videoModel)
+        }
+        videoUpdateMap.clear()
+
+        userUpdateMap.forEach { (_, userModel) ->
+            updateUserData(userModel)
+        }
+        userUpdateMap.clear()
+    }
+
+    fun checkVideoDetailsStatus(binding: VideoItemRowBinding, videoModel: VideoModel) {
+        // Check if the current user has liked the video
+        if (videoModel.likeList.contains(currentUserId)) {
+            binding.likeIcon.setColorFilter(
+                ContextCompat.getColor(binding.likeIcon.context, R.color.my_primary),
+                PorterDuff.Mode.SRC_IN
+            )
+        } else {
+            binding.likeIcon.clearColorFilter()
+        }
+
+        // Check if the current user has disliked the video
+        if (videoModel.dislikeList.contains(currentUserId)) {
+            binding.dislikeIcon.setColorFilter(
+                ContextCompat.getColor(binding.dislikeIcon.context, R.color.my_primary),
+                PorterDuff.Mode.SRC_IN
+            )
+        } else {
+            binding.dislikeIcon.clearColorFilter()
+        }
+
+        // Check if the current user has bookmarked the video
+        if (currentUserModel?.bookMarkList?.contains(videoModel.videoId) == true) {
+            binding.bookmarkIcon.setColorFilter(
+                ContextCompat.getColor(binding.bookmarkIcon.context, R.color.my_primary),
+                PorterDuff.Mode.SRC_IN
+            )
+        } else {
+            binding.bookmarkIcon.clearColorFilter()
+        }
+    }
 }

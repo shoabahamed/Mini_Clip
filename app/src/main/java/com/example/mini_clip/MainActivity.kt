@@ -60,12 +60,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        adapter.updateAllChanges()
         adapter.startListening()
     }
 
     override fun onPause() {
         super.onPause()
-        updateVideoDetails()
     }
 
     private fun updateVideoDetails() {
