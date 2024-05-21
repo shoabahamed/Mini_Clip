@@ -59,4 +59,6 @@ dependencies {
     //firebase ui
     implementation ("com.firebaseui:firebase-ui-firestore:8.0.2")
     implementation ("com.firebaseui:firebase-ui-storage:8.0.2")
+
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
 }
