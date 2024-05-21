@@ -61,4 +61,6 @@ dependencies {
     implementation ("com.firebaseui:firebase-ui-storage:8.0.2")
 
     implementation ("androidx.recyclerview:recyclerview:1.2.1")
+
+    implementation ("com.arthenica:ffmpeg-kit-full:4.5.LTS")
 }
