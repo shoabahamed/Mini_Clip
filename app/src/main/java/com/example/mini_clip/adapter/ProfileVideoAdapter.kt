@@ -1,9 +1,11 @@
 package com.example.mini_clip.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.mini_clip.SingleVideoPlayerActivity
 import com.example.mini_clip.databinding.ProfileVideoItemRowBinding
 import com.example.mini_clip.model.VideoModel
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -20,6 +22,11 @@ class ProfileVideoAdapter(options:FirestoreRecyclerOptions<VideoModel>)
             Glide.with(binding.thumbnailImageView)
                 .load(video.url)
                 .into(binding.thumbnailImageView)
+            binding.thumbnailImageView.setOnClickListener{
+                val intent=Intent(binding.thumbnailImageView.context,SingleVideoPlayerActivity::class.java)
+                intent.putExtra("videoId", video.videoId)
+                binding.thumbnailImageView.context.startActivity(intent)
+            }
         }
     }
 
