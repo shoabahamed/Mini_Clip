@@ -15,12 +15,14 @@ class SingleVideoPlayerActivity : AppCompatActivity() {
     lateinit var binding: ActivitySingleVideoPlayerBinding
     lateinit var videoId: String
     lateinit var adapter: VideoListAdapter
+    var showDeleteButton:Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=ActivitySingleVideoPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         videoId=intent.getStringExtra("videoId")!!
+        showDeleteButton = intent.getStringExtra("showDeleteButton").toBoolean()
         setupViewPager()
 
         }
@@ -33,7 +35,7 @@ class SingleVideoPlayerActivity : AppCompatActivity() {
                     .whereEqualTo("videoId",videoId),
                 VideoModel::class.java
             ).build()
-        adapter=VideoListAdapter(options)
+        adapter=VideoListAdapter(options, showDeleteButton)
         binding.videPager.adapter=adapter
     }
 

@@ -50,6 +50,16 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/username_input"
+            android:background="@drawable/rounded_corner"
+            android:hint="Username"
+            android:inputType="textEmailAddress"
+            android:padding="12dp"
+            android:layout_margin="12dp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/password_input"
             android:background="@drawable/rounded_corner"
             android:hint="Password"

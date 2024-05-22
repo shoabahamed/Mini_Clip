@@ -71,6 +71,7 @@ class ProfileActivity : AppCompatActivity() {
         openFragment(PostFragment().apply {
             arguments = Bundle().apply {
                 putString("profile_user_id", profileUserId)
+                putString("current_user_id", currentUserId)
             }
         })
         binding.postBorder.visibility = View.VISIBLE
@@ -79,6 +80,7 @@ class ProfileActivity : AppCompatActivity() {
             openFragment(PostFragment().apply {
                 arguments = Bundle().apply {
                     putString("profile_user_id", profileUserId)
+                    putString("current_user_id", currentUserId)
                 }
             })
             binding.postBorder.visibility = View.VISIBLE

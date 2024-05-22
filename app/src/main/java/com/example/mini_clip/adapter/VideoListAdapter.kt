@@ -12,6 +12,7 @@ import com.example.mini_clip.R
 import com.example.mini_clip.databinding.VideoItemRowBinding
 import com.example.mini_clip.model.UserModel
 import com.example.mini_clip.model.VideoModel
+import com.example.mini_clip.util.UiUtil
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -19,7 +20,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class VideoListAdapter(
-    options: FirestoreRecyclerOptions<VideoModel>
+    options: FirestoreRecyclerOptions<VideoModel>,
+    private val showDeleteButton: Boolean = false
 ) : FirestoreRecyclerAdapter<VideoModel, VideoListAdapter.VideoViewHolder>(options) {
 
     private lateinit var currentUserId: String
@@ -133,6 +135,13 @@ class VideoListAdapter(
             setUI(binding, videoModel)
 
             binding.progressBar.visibility = View.VISIBLE
+            if(showDeleteButton){
+                binding.deleteIcon.visibility = View.VISIBLE
+                binding.deleteIcon.setOnClickListener {
+                    deleteVideo(binding, videoModel)
+                }
+            }
+
             // Bind video
             binding.videoView.apply {
                 setVideoPath(videoModel.url)
@@ -279,5 +288,26 @@ class VideoListAdapter(
         } else {
             binding.bookmarkIcon.clearColorFilter()
         }
+    }
+
+    private fun deleteVideo(binding: VideoItemRowBinding, videoModel: VideoModel) {
+        Firebase.firestore.collection("videos")
+            .document(videoModel.videoId)
+            .delete()
+            .addOnSuccessListener {
+                // DocumentSnapshot successfully deleted
+                // Navigate to ProfileActivity
+                UiUtil.showToast(binding.deleteIcon.context, "Video deleted Successfully")
+                val intent = Intent(binding.deleteIcon.context, ProfileActivity::class.java)
+                binding.deleteIcon.context.startActivity(intent)
+            }
+            .addOnFailureListener { e ->
+                // An error occurred while deleting the document
+                // You can log the error or notify the user about the failure
+                // For example, show a toast message
+                UiUtil.showToast(binding.deleteIcon.context, "Error deleting video: ${e.message}")
+                val intent = Intent(binding.deleteIcon.context, ProfileActivity::class.java)
+                binding.deleteIcon.context.startActivity(intent)
+            }
     }
 }

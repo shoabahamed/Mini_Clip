@@ -139,6 +139,22 @@
                 android:layout_marginTop="4dp"/>
         </RelativeLayout>
 
+        <!-- Delete Button -->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <ImageView
+                android:id="@+id/delete_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/delete_icon"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+            
+        </RelativeLayout>
+
     </LinearLayout>
 
 

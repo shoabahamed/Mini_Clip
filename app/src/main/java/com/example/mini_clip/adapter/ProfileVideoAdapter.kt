@@ -3,16 +3,19 @@ package com.example.mini_clip.adapter
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mini_clip.PostFragment
 import com.example.mini_clip.SingleVideoPlayerActivity
 import com.example.mini_clip.databinding.ProfileVideoItemRowBinding
 import com.example.mini_clip.model.VideoModel
+import com.example.mini_clip.util.UiUtil
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 
-class ProfileVideoAdapter(options:FirestoreRecyclerOptions<VideoModel>)
+class ProfileVideoAdapter(options:FirestoreRecyclerOptions<VideoModel>,
+                          private val showDeleteButton: Boolean = false)
     :FirestoreRecyclerAdapter<VideoModel, ProfileVideoAdapter.VideoViewHolder>(options)
 {
 
@@ -26,6 +29,7 @@ class ProfileVideoAdapter(options:FirestoreRecyclerOptions<VideoModel>)
             binding.thumbnailImageView.setOnClickListener{
                 val intent=Intent(binding.thumbnailImageView.context,SingleVideoPlayerActivity::class.java)
                 intent.putExtra("videoId", video.videoId)
+                intent.putExtra("showDeleteButton", showDeleteButton.toString())
                 binding.thumbnailImageView.context.startActivity(intent)
             }
         }

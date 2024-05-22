@@ -49,6 +49,8 @@ class SignupActivity : AppCompatActivity() {
         val email =binding.emailInput.text.toString()
         val password=binding.passwordInput.text.toString()
         val confirmPassword = binding.confirmPasswordInput.text.toString()
+        val username = binding.usernameInput.text.toString()
+
 
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches())
         {
@@ -66,17 +68,17 @@ class SignupActivity : AppCompatActivity() {
             return
         }
 
-        signupWithFirebase(email,password)
+        signupWithFirebase(email,password, username)
 
     }
-    fun signupWithFirebase(email: String,password: String){
+    fun signupWithFirebase(email: String,password: String, username: String){
 
         setInProgress(true)
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(
             email,password
         ).addOnSuccessListener {
             it.user?.let {user->
-                val userModel = UserModel(user.uid,email,email.substringBefore("@"))
+                val userModel = UserModel(user.uid,email,username)
                 Firebase.firestore.collection("users")
                     .document(user.uid)
                     .set(userModel).addOnSuccessListener {
