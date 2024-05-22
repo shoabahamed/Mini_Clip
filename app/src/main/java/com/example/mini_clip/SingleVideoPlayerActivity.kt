@@ -44,7 +44,9 @@ class SingleVideoPlayerActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        adapter.updateAllChanges()
         adapter.startListening()
     }
+
 
 }

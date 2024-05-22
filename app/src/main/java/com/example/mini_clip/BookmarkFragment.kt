@@ -1,6 +1,9 @@
 package com.example.mini_clip
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class BookmarkFragment : Fragment(R.layout.fragment_bookmark) {
     private lateinit var binding: FragmentBookmarkBinding
     private lateinit var profileUserId: String
+    private lateinit var currentUserId : String
     private lateinit var adapter: ProfileVideoAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -21,7 +25,13 @@ class BookmarkFragment : Fragment(R.layout.fragment_bookmark) {
         binding = FragmentBookmarkBinding.bind(view)
 
         profileUserId = arguments?.getString("profile_user_id") ?: ""
-        fetchBookmarkedVideos()
+        currentUserId = arguments?.getString("current_user_id") ?: ""
+        if(profileUserId == currentUserId){
+            fetchBookmarkedVideos()
+        }else{
+            binding.message.visibility = View.VISIBLE
+        }
+
     }
 
     private fun fetchBookmarkedVideos() {
@@ -72,4 +82,13 @@ class BookmarkFragment : Fragment(R.layout.fragment_bookmark) {
             adapter.stopListening()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        Handler(Looper.getMainLooper()).postDelayed({
+            fetchBookmarkedVideos()
+        }, 2000)
+
+    }
+
 }

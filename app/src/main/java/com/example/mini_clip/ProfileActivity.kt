@@ -13,17 +13,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.mini_clip.adapter.ProfileVideoAdapter
 import com.example.mini_clip.databinding.ActivityProfileBinding
 import com.example.mini_clip.model.UserModel
-import com.example.mini_clip.model.VideoModel
-import com.example.mini_clip.util.UiUtil
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Query
@@ -73,7 +67,6 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
         getProfileDataFromFirebase()
-//            setupRecyclerView()
 
         openFragment(PostFragment().apply {
             arguments = Bundle().apply {
@@ -97,6 +90,7 @@ class ProfileActivity : AppCompatActivity() {
                 openFragment(BookmarkFragment().apply {
                     arguments = Bundle().apply {
                         putString("profile_user_id", profileUserId)
+                        putString("current_user_id", currentUserId)
                     }
                 })
                 binding.postBorder.visibility = View.GONE
@@ -239,30 +233,5 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
-
-//    fun setupRecyclerView()
-//    {
-//        val options=FirestoreRecyclerOptions.Builder<VideoModel>()
-//            .setQuery(
-//                Firebase.firestore.collection("videos")
-//                    .whereEqualTo("uploaderId", profileUserId)
-//                    .orderBy("createdTime", Query.Direction.DESCENDING),
-//                VideoModel::class.java
-//            ).build()
-//        adapter= ProfileVideoAdapter(options)
-//       binding.recyclerView.layoutManager=GridLayoutManager(this, 3)
-//        binding.recyclerView.adapter=adapter
-//    }
-
-//    override fun onStart()
-//    {
-//        super.onStart()
-//        adapter.startListening()
-//    }
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        adapter.stopListening()
-//    }
 
 }

@@ -68,16 +68,6 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    private fun updateVideoDetails() {
-        for (position in 0 until adapter.itemCount) {
-            val videoModel = adapter.getItem(position)
-            updateVideoData(videoModel)
-        }
-    }
-    fun updateVideoData(model: VideoModel) {
-        com.google.firebase.ktx.Firebase.firestore.collection("videos")
-            .document(model.videoId)
-            .set(model)
-    }
+
 
 }
