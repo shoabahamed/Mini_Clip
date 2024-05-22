@@ -12,6 +12,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -19,6 +22,7 @@ import com.example.mini_clip.adapter.ProfileVideoAdapter
 import com.example.mini_clip.databinding.ActivityProfileBinding
 import com.example.mini_clip.model.UserModel
 import com.example.mini_clip.model.VideoModel
+import com.example.mini_clip.util.UiUtil
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -33,7 +37,7 @@ class ProfileActivity : AppCompatActivity() {
     lateinit var currentUserId: String
     lateinit var photoLauncher: ActivityResultLauncher<Intent>
 
-    lateinit var adapter: ProfileVideoAdapter
+//    lateinit var adapter: ProfileVideoAdapter
 
     lateinit var profileUserModel: UserModel
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,11 +71,48 @@ class ProfileActivity : AppCompatActivity() {
             binding.profileBtn.setOnClickListener {
                 followUnfollowUser()
             }
+        }
+        getProfileDataFromFirebase()
+//            setupRecyclerView()
+
+        openFragment(PostFragment().apply {
+            arguments = Bundle().apply {
+                putString("profile_user_id", profileUserId)
             }
-            getProfileDataFromFirebase()
-            setupRecyclerView()
+        })
+        binding.postBorder.visibility = View.VISIBLE
+
+        binding.postFragment.setOnClickListener {
+            openFragment(PostFragment().apply {
+                arguments = Bundle().apply {
+                    putString("profile_user_id", profileUserId)
+                }
+            })
+            binding.postBorder.visibility = View.VISIBLE
+            binding.bookmarkBorder.visibility = View.GONE
+
         }
 
+        binding.bookmarkFragment.setOnClickListener {
+                openFragment(BookmarkFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("profile_user_id", profileUserId)
+                    }
+                })
+                binding.postBorder.visibility = View.GONE
+                binding.bookmarkBorder.visibility = View.VISIBLE
+            }
+
+
+
+    }
+
+    private fun openFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(binding.fragmentContainer.id, fragment)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            .commit()
+    }
 
 
         fun followUnfollowUser() {
@@ -199,29 +240,29 @@ class ProfileActivity : AppCompatActivity() {
     }
 
 
-    fun setupRecyclerView()
-    {
-        val options=FirestoreRecyclerOptions.Builder<VideoModel>()
-            .setQuery(
-                Firebase.firestore.collection("videos")
-                    .whereEqualTo("uploaderId", profileUserId)
-                    .orderBy("createdTime", Query.Direction.DESCENDING),
-                VideoModel::class.java
-            ).build()
-        adapter= ProfileVideoAdapter(options)
-       binding.recyclerView.layoutManager=GridLayoutManager(this, 3)
-        binding.recyclerView.adapter=adapter
-    }
+//    fun setupRecyclerView()
+//    {
+//        val options=FirestoreRecyclerOptions.Builder<VideoModel>()
+//            .setQuery(
+//                Firebase.firestore.collection("videos")
+//                    .whereEqualTo("uploaderId", profileUserId)
+//                    .orderBy("createdTime", Query.Direction.DESCENDING),
+//                VideoModel::class.java
+//            ).build()
+//        adapter= ProfileVideoAdapter(options)
+//       binding.recyclerView.layoutManager=GridLayoutManager(this, 3)
+//        binding.recyclerView.adapter=adapter
+//    }
 
-    override fun onStart()
-    {
-        super.onStart()
-        adapter.startListening()
-    }
+//    override fun onStart()
+//    {
+//        super.onStart()
+//        adapter.startListening()
+//    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        adapter.stopListening()
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        adapter.stopListening()
+//    }
 
 }

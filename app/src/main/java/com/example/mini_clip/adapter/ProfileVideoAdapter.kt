@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.mini_clip.PostFragment
 import com.example.mini_clip.SingleVideoPlayerActivity
 import com.example.mini_clip.databinding.ProfileVideoItemRowBinding
 import com.example.mini_clip.model.VideoModel

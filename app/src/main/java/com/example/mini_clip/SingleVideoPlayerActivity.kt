@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mini_clip.databinding.ActivitySingleVideoPlayerBinding
 import com.example.mini_clip.model.VideoModel
+import com.example.mini_clip.util.UiUtil
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -19,7 +20,7 @@ class SingleVideoPlayerActivity : AppCompatActivity() {
         binding=ActivitySingleVideoPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        videoId=intent.getStringExtra("video")!!
+        videoId=intent.getStringExtra("videoId")!!
         setupViewPager()
 
         }
@@ -43,7 +44,7 @@ class SingleVideoPlayerActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        adapter.stopListening()
+        adapter.startListening()
     }
 
 }
