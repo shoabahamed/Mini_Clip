@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.mini_clip.PostFragment
 import com.example.mini_clip.SingleVideoPlayerActivity
 import com.example.mini_clip.databinding.ProfileVideoItemRowBinding
@@ -23,9 +25,14 @@ class ProfileVideoAdapter(options:FirestoreRecyclerOptions<VideoModel>,
     {
         fun bind(video: VideoModel)
         {
-            Glide.with(binding.thumbnailImageView)
+            Glide.with(binding.thumbnailImageView.context)
                 .load(video.url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // Enable both memory and disk caching
+                .thumbnail(0.1f) // Load a smaller thumbnail first
+                .apply(RequestOptions().centerCrop()) // Center crop transformation
                 .into(binding.thumbnailImageView)
+
+
             binding.thumbnailImageView.setOnClickListener{
                 val intent=Intent(binding.thumbnailImageView.context,SingleVideoPlayerActivity::class.java)
                 intent.putExtra("videoId", video.videoId)
