@@ -63,4 +63,24 @@ dependencies {
     implementation ("androidx.recyclerview:recyclerview:1.2.1")
 
     implementation ("com.arthenica:ffmpeg-kit-full:4.5.LTS")
+
+
+    // Unit testing dependencies
+    testImplementation(libs.junit)
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("com.google.truth:truth:1.1.3")
+
+    // UI testing dependencies
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation("org.mockito:mockito-core:3.12.4")
+    androidTestImplementation("org.mockito:mockito-android:3.12.4")
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-idling-resource:3.5.1")
+
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
 }
+
+
+
